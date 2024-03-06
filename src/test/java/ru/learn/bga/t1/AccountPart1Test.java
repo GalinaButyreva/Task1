@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 public class AccountPart1Test {
     @Test
-    @Description("Тестирование валидности имени для пустого значения")
+    @Description("Тестирование валидности имени для пустого значения Задание 1.")
     void setUserEmpty() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> new  Account(""));
         Assertions.assertThrows(IllegalArgumentException.class, () -> new  Account("user1").setUser(null));
