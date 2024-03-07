@@ -21,7 +21,7 @@ public class Account {
     // Задание 2
     private void pushPrevCommandUser(String userPrev) {
         // Пытаемся через функциональный стиль
-        CommandInterface commandInterface = ()->{this.user=userPrev;};
+        CommandInterface commandInterface = ()->this.user=userPrev;
         commandInterfaceDeque.push(commandInterface);
     }
     // реализовать execute интерфейса для Valuta
@@ -32,9 +32,9 @@ public class Account {
         // эти команды будем выполнять при восстановлении команд из очереди
         // Пробуем через функциональный стиль
         if (enumMapValCnt.containsKey(valuta) && cntPrev != null)
-            commandInterface = ()->{this.enumMapValCnt.put(valuta, cntPrev);};
+            commandInterface = ()->this.enumMapValCnt.put(valuta, cntPrev);
         else
-            commandInterface = ()->{this.enumMapValCnt.remove(valuta);};
+            commandInterface = ()->this.enumMapValCnt.remove(valuta);
         commandInterfaceDeque.push(commandInterface);
 
     }
@@ -50,7 +50,7 @@ public class Account {
         accountSaves.add(snapshotInterface);
         commandInterfaceDeque.clear();
         return snapshotInterface;
-    };
+    }
 
     public void restoreStateOndate(LocalDateTime date) {
         var iterator = accountSaves.iterator();
@@ -123,7 +123,7 @@ public class Account {
     public void setValuta(EnumValuta valuta,  Integer  cnt){
         if (cnt < 0) {
             throw new IllegalArgumentException("Количество валюты не может быть отрицательным");
-        };
+        }
         // Отправим в очередь предыдущее количество валюты
         pushPrevCommandValuta(valuta);
         // Установим текущее кол-во валюты
