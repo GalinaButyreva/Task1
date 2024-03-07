@@ -7,26 +7,19 @@ import java.util.*;
 public class Account {
     private String user;
     private EnumMap <EnumValuta, Integer> enumMapValCnt;
-    private Deque<CommandInterface> commandInterfaceDeque = new ArrayDeque<>();
-    private List<SnapshotInterface> accountSaves = new ArrayList<>();
+    private final Deque<CommandInterface> commandInterfaceDeque = new ArrayDeque<>();
+    private final List<SnapshotInterface> accountSaves = new ArrayList<>();
 
     private void checkUser(String user) {
         if (user == null){
             throw new IllegalArgumentException("Имя не может быть null");
         }
-        else if (user.equals("")) {
+        else if (user.isEmpty()) {
             throw new IllegalArgumentException("Имя не может быть пустым");
         }
     }
     // Задание 2
     private void pushPrevCommandUser(String userPrev) {
-        /*  Так понятнее пока для меня, но не красиво
-        CommandInterface  commandInterface = new CommandInterface() {
-            @Override
-            public void execute() {
-                Account.this.user = userPrev;
-            }
-        };*/
         // Пытаемся через функциональный стиль
         CommandInterface commandInterface = ()->{this.user=userPrev;};
         commandInterfaceDeque.push(commandInterface);
@@ -36,24 +29,7 @@ public class Account {
         CommandInterface commandInterface;
         // Предыдущее значение кол-ва валюты
         Integer cntPrev = enumMapValCnt.get(valuta);
-        // если валюта есть меняем, если валюты нет(ее добавили),
-        // то удаляем (эти команды будем выполнять при восстановлении команд из очереди)
-
-        /*// Так понятнее, но не красиво
-        // Boolean isNotRemoveVal = (enumMapValCnt.containsKey(valuta) && cntPrev != null);
-        // Определим execute для валюты (Возможно, использование функционального интерфейса с лямбда было бы нагляднее
-        // , пока мне так понятнее)
-            commandInterface  = new CommandInterface() {
-            @Override
-            public void execute() {
-                if (isNotRemoveVal) {
-                    Account.this.enumMapValCnt.put(valuta, cntPrev);
-                } else
-                {
-                    Account.this.enumMapValCnt.remove(valuta);
-                }
-            }
-        };*/
+        // эти команды будем выполнять при восстановлении команд из очереди
         // Пробуем через функциональный стиль
         if (enumMapValCnt.containsKey(valuta) && cntPrev != null)
             commandInterface = ()->{this.enumMapValCnt.put(valuta, cntPrev);};
@@ -63,7 +39,7 @@ public class Account {
 
     }
     public void undo() {
-        if (commandInterfaceDeque.isEmpty() == false)
+        if (!commandInterfaceDeque.isEmpty())
             commandInterfaceDeque.pop().execute();
         else
             throw  new RuntimeException("Объект вернулся к состоянию на момент создания");
@@ -77,7 +53,6 @@ public class Account {
     };
 
     public void restoreStateOndate(LocalDateTime date) {
-        SnapshotInterface accountOut = null;
         var iterator = accountSaves.iterator();
         while (iterator.hasNext()){
             SnapshotInterface snapshot = iterator.next();
